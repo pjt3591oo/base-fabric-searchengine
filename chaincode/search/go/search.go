@@ -51,13 +51,13 @@ type Car struct {
 }
 
 type Keyword struct {
-  Count int `json:"count"`
-  Address []string `json:address`
+	Count   int      `json:"count"`
+	Address []string `json:address`
 }
 
 type Address struct {
-  Count int `json:"count"`
-  Keyword []string `json:keyword`
+	Count   int      `json:"count"`
+	Keyword []string `json:keyword`
 }
 
 /*
@@ -87,13 +87,13 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllCars(APIstub)
 	} else if function == "changeCarOwner" {
 		return s.changeCarOwner(APIstub, args)
-	}else if function == "saved" {
+	} else if function == "saved" {
 		return s.saved(APIstub, args)
-	}else if function == "searched" {
+	} else if function == "searched" {
 		return s.searched(APIstub, args)
-	}else if function == "visited" {
+	} else if function == "visited" {
 		return s.visited(APIstub, args)
-	}else if function == "getAddressFromKeyword" {
+	} else if function == "getAddressFromKeyword" {
 		return s.getAddressFromKeyword(APIstub, args)
 	}
 
@@ -123,7 +123,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	// 	Car{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
 	// 	Car{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
 	// }
-  //
+	//
 	// i := 0
 	// for i < len(cars) {
 	// 	fmt.Println("i is ", i)
@@ -214,59 +214,57 @@ func (s *SmartContract) changeCarOwner(APIstub shim.ChaincodeStubInterface, args
 // ====================search start ===========================
 
 func (s *SmartContract) saved(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-  // Invoke
+	// Invoke
 
-  addressParam := args[0]
-  keywordParam := args[1]
+	addressParam := args[0]
+	keywordParam := args[1]
 
-  fmt.Printf("- saved address parameter:\n%s\n", addressParam)
-  fmt.Printf("- sabed keyword parameter:\n%s\n", keywordParam)
+	fmt.Printf("- saved address parameter:\n%s\n", addressParam)
+	fmt.Printf("- sabed keyword parameter:\n%s\n", keywordParam)
 
-  keywordAsBytes, _ := APIstub.GetState(addressParam)
-  addresswordAsBytes, _ := APIstub.GetState(keywordParam)
-  keyword := Keyword{}
-  address := Address{}
+	keywordAsBytes, _ := APIstub.GetState(addressParam)
+	addresswordAsBytes, _ := APIstub.GetState(keywordParam)
+	keyword := Keyword{}
+	address := Address{}
 
-  json.Unmarshal(keywordAsBytes, &keyword)
+	json.Unmarshal(keywordAsBytes, &keyword)
 	keyword.Address = append(keyword.Address, addressParam)
-  json.Unmarshal(addresswordAsBytes, &address)
+	json.Unmarshal(addresswordAsBytes, &address)
 	address.Keyword = append(address.Keyword, keywordParam)
 
-  keywordAsBytes, _ = json.Marshal(keyword)
+	keywordAsBytes, _ = json.Marshal(keyword)
 	APIstub.PutState(keywordParam, []byte(keywordAsBytes))
-  addresswordAsBytes, _ = json.Marshal(address)
+	addresswordAsBytes, _ = json.Marshal(address)
 	APIstub.PutState(addressParam, []byte(addresswordAsBytes))
 
-  return shim.Success(nil)
+	return shim.Success(nil)
 }
 
 func (s *SmartContract) searched(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-  // Invoke
-  return shim.Success(nil)
+	// Invoke
+	return shim.Success(nil)
 }
 
 func (s *SmartContract) visited(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-  // Invoke
-  return shim.Success(nil)
+	// Invoke
+	return shim.Success(nil)
 }
 
 func (s *SmartContract) getAddressFromKeyword(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-  // Query 키워드에 해당하는 주소리스트
+	k := args[0]
 
-  k := args[0]
-
-  keywordAsBytes, _ := APIstub.GetState(k)
-  keyword := Keyword{}
+	keywordAsBytes, _ := APIstub.GetState(k)
+	keyword := Keyword{}
 
 	json.Unmarshal(keywordAsBytes, &keyword)
 	keyword.Count = keyword.Count + 1
 
-  APIstub.PutState("a", []byte(strconv.Itoa(10)))
+	APIstub.PutState(k, []byte(strconv.Itoa(10)))
 
 	keywordAsBytes, _ = json.Marshal(keyword)
-	APIstub.PutState("a", []byte(keywordAsBytes))
+	APIstub.PutState(k, []byte(keywordAsBytes))
 
-  return shim.Success(nil)
+	return shim.Success(nil)
 }
 
 // The main function is only relevant in unit test mode. Only included here for completeness.

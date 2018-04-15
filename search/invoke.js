@@ -61,8 +61,8 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	var request = {
 		//targets: let default to the peer assigned to the client
 		chaincodeId: 'fabcar',
-		fcn: 'saved',
-		args: ['http://www.naver.com2', 'test2'],
+		fcn: 'getAddressFromKeyword',
+		args: ['http://www.naver.com1'],
 		chainId: 'mychannel',
 		txId: tx_id
 	};
